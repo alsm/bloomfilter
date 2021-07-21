@@ -11,7 +11,6 @@
 package bloomfilter
 
 import (
-	"hash"
 	"sync"
 )
 
@@ -25,12 +24,11 @@ type Filter struct {
 }
 
 // Hashable -> hashes
-func (f *Filter) hash(v hash.Hash64) []uint64 {
-	rawHash := v.Sum64()
+func (f *Filter) hash(v uint64) []uint64 {
 	n := len(f.keys)
 	hashes := make([]uint64, n)
 	for i := 0; i < n; i++ {
-		hashes[i] = rawHash ^ f.keys[i]
+		hashes[i] = v ^ f.keys[i]
 	}
 	return hashes
 }
@@ -46,7 +44,7 @@ func (f *Filter) K() uint64 {
 }
 
 // Add a hashable item, v, to the filter
-func (f *Filter) Add(v hash.Hash64) {
+func (f *Filter) Add(v uint64) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 
@@ -61,7 +59,7 @@ func (f *Filter) Add(v hash.Hash64) {
 // Contains tests if f contains v
 // false: f definitely does not contain value v
 // true:  f maybe contains value v
-func (f *Filter) Contains(v hash.Hash64) bool {
+func (f *Filter) Contains(v uint64) bool {
 	f.lock.RLock()
 	defer f.lock.RUnlock()
 

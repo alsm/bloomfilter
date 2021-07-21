@@ -20,7 +20,7 @@ func TestWriteRead(t *testing.T) {
 	f, _ := New(2, 1)
 
 	v := hashableUint64(0)
-	f.Add(v)
+	f.Add(v.Sum64())
 
 	var b bytes.Buffer
 
@@ -34,7 +34,7 @@ func TestWriteRead(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !f2.Contains(v) {
+	if !f2.Contains(v.Sum64()) {
 		t.Error("Filters not equal")
 	}
 }

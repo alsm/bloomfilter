@@ -68,13 +68,13 @@ func Test0(t *testing.T) {
 
 	t.Log("Filled ratio before adds :", bf.PreciseFilledRatio())
 	for _, x := range hashableUint64Values() {
-		bf.Add(x)
+		bf.Add(x.Sum64())
 	}
 	t.Log("Filled ratio after adds :", bf.PreciseFilledRatio())
 
 	// these may or may not be true
 	for _, y := range hashableUint64Values() {
-		if bf.Contains(y) {
+		if bf.Contains(y.Sum64()) {
 			t.Log("value in set querties: may contain ", y)
 		} else {
 			t.Fatal("value in set queries: definitely does not contain ", y,
@@ -84,7 +84,7 @@ func Test0(t *testing.T) {
 
 	// these must all be false
 	for _, z := range hashableUint64NotValues() {
-		if bf.Contains(z) {
+		if bf.Contains(z.Sum64()) {
 			t.Log("value not in set queries: may or may not contain ", z)
 		} else {
 			t.Log("value not in set queries: definitely does not contain ", z,
@@ -98,7 +98,7 @@ func BenchmarkAddX10kX5(b *testing.B) {
 	bf, _ := New(10000, 5)
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		bf.Add(hashableUint64(rand.Uint32()))
+		bf.Add(hashableUint64(rand.Uint32()).Sum64())
 	}
 }
 
@@ -106,11 +106,11 @@ func BenchmarkContains1kX10kX5(b *testing.B) {
 	b.StopTimer()
 	bf, _ := New(10000, 5)
 	for i := 0; i < 1000; i++ {
-		bf.Add(hashableUint64(rand.Uint32()))
+		bf.Add(hashableUint64(rand.Uint32()).Sum64())
 	}
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		bf.Contains(hashableUint64(rand.Uint32()))
+		bf.Contains(hashableUint64(rand.Uint32()).Sum64())
 	}
 }
 
@@ -118,10 +118,10 @@ func BenchmarkContains100kX10BX20(b *testing.B) {
 	b.StopTimer()
 	bf, _ := New(10*1000*1000*1000, 20)
 	for i := 0; i < 100*1000; i++ {
-		bf.Add(hashableUint64(rand.Uint32()))
+		bf.Add(hashableUint64(rand.Uint32()).Sum64())
 	}
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		bf.Contains(hashableUint64(rand.Uint32()))
+		bf.Contains(hashableUint64(rand.Uint32()).Sum64())
 	}
 }
